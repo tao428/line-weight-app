@@ -1,11 +1,10 @@
 
-import { GoogleAuth } from 'google-auth-library';
 import { google } from 'googleapis';
 
 async function listServices() {
     console.log('Listing enabled services...');
 
-    const auth = new GoogleAuth({
+    const auth = new google.auth.GoogleAuth({
         credentials: {
             client_email: process.env.FIREBASE_CLIENT_EMAIL,
             private_key: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
