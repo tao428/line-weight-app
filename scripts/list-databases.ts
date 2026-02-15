@@ -24,9 +24,11 @@ async function listDatabases() {
         // Actually listDatabases takes parent as `projects/{project_id}`
         const projectParent = `projects/${process.env.FIREBASE_PROJECT_ID}`;
 
-        const [databases] = await client.listDatabases({
+        const [response] = await client.listDatabases({
             parent: `projects/${process.env.FIREBASE_PROJECT_ID}`,
         });
+
+        const databases = response.databases;
 
         console.log('Found databases:', databases);
         if (databases && databases.length > 0) {
