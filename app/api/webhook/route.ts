@@ -21,20 +21,27 @@ export async function POST(req: NextRequest) {
             .digest('base64');
 
         if (hash !== signature) {
-            console.error('Invalid signature');
+            console.error('Invalid signature', {
+                received: signature,
+                calculated: hash,
+                bodyLength: body.length
+            });
             return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
         }
 
-        const events = JSON.parse(body).events;
+        const data = JSON.parse(body);
+        const events = data.events;
 
         // Process events (if any)
         // For verification, events might be empty or contain a dummy event
         // We just return 200 OK
+        console.log('Webhook payload:', JSON.stringify(data, null, 2));
 
-        // Example: Log event
-        events.forEach((event: any) => {
-            console.log('Received event:', event);
-        });
+        if (events && Array.isArray(events)) {
+            events.forEach((event: any) => {
+                console.log('Received event:', event);
+            });
+        }
 
         return NextResponse.json({ status: 'ok' });
     } catch (error) {
