@@ -38,14 +38,15 @@ function PlayerRow({ player, refresh, onSelect, isSelected }: { player: Player, 
         if (isNaN(val)) return;
         setSaving(true);
         try {
-            // Mock update for now
-            console.log(`[MOCK] Updating target weight for ${player.id} to ${val}`);
-            // In real app: await fetch('/api/admin/users', { method: 'PATCH', ... })
+            const res = await fetch('/api/admin/users', {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId: player.id, target_weight: val }),
+            });
 
-            // Artificial delay
-            await new Promise(r => setTimeout(r, 500));
+            if (!res.ok) throw new Error('Failed to update');
 
-            alert('Updated (Mock)!');
+            alert('Updated!');
             setIsEditing(false);
             refresh();
         } catch (e) {
