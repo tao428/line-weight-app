@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
+import { lineClient } from '@/lib/line';
+import { WebhookEvent } from '@line/bot-sdk';
 
 // LINE Channel Secret from env
 const channelSecret = process.env.LINE_CHANNEL_SECRET || '';
@@ -42,10 +44,25 @@ export async function POST(req: NextRequest) {
         // We just return 200 OK
         console.log('Webhook payload:', JSON.stringify(data, null, 2));
 
+
         if (events && Array.isArray(events)) {
-            events.forEach((event: any) => {
-                console.log('Received event:', event);
-            });
+            await Promise.all(events.map(async (event: WebhookEvent) => {
+                try {
+                    if (event.type === 'follow') {
+                        const liffUrl = `https://liff.line.me/${process.env.NEXT_PUBLIC_LIFF_ID}`;
+                        await lineClient.replyMessage({
+                            replyToken: event.replyToken!,
+                            messages: [{
+                                type: 'text',
+                                text: `友だち追加ありがとうございます！\n\nこちらからプロフィール登録をお願いします。\n${liffUrl}`
+                            }]
+                        });
+                        console.log(`Sent welcome message to ${event.source.userId}`);
+                    }
+                } catch (err) {
+                    console.error('Error handling event:', err);
+                }
+            }));
         }
 
         return NextResponse.json({ status: 'ok' });
