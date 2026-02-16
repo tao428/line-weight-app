@@ -13,6 +13,11 @@ export default function Home() {
   const router = useRouter();
   const [status, setStatus] = useState<'loading' | 'register' | 'error' | 'login'>('loading');
   const [statusMessage, setStatusMessage] = useState('Initializing...');
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   // Registration Form State
   const [role, setRole] = useState<'player' | 'admin'>('player');
@@ -99,7 +104,7 @@ export default function Home() {
     }
   };
 
-  if (status === 'loading') {
+  if (!isMounted || status === 'loading') {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center p-6 bg-gradient-to-br from-indigo-500 to-purple-600 text-white">
         <div className="flex flex-col items-center animate-pulse">
