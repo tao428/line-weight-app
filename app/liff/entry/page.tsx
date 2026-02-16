@@ -8,7 +8,7 @@ import { Loader2, Save } from 'lucide-react';
 import { format } from 'date-fns';
 
 export default function LiffEntryPage() {
-    const { liff, isLoggedIn, profile } = useLiff();
+    const { liff, isLoggedIn, profile, error } = useLiff();
     const router = useRouter();
     const [weight, setWeight] = useState<string>('');
     const [date, setDate] = useState<string>(format(new Date(), 'yyyy-MM-dd'));
@@ -23,6 +23,24 @@ export default function LiffEntryPage() {
             setStatusMessage('Please login to LINE.');
         }
     }, [liff, isLoggedIn]);
+
+    if (error) {
+        return (
+            <div className="flex flex-col min-h-screen items-center justify-center p-6 bg-slate-50 text-center">
+                <div className="bg-white p-8 rounded-2xl shadow-lg max-w-sm w-full space-y-4">
+                    <h2 className="text-xl font-bold text-red-600">LIFF Error</h2>
+                    <p className="text-gray-600">Failed to initialize LIFF.</p>
+                    <p className="text-xs text-gray-400 break-all">{String(error)}</p>
+                    <button
+                        onClick={() => window.location.reload()}
+                        className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl transition-colors"
+                    >
+                        Retry
+                    </button>
+                </div>
+            </div>
+        );
+    }
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -72,10 +90,28 @@ export default function LiffEntryPage() {
         }
     };
 
-    if (!liff || !isLoggedIn) {
+    if (!liff) {
         return (
             <div className="flex min-h-screen items-center justify-center p-6 bg-slate-50">
                 <Loader2 className="animate-spin h-8 w-8 text-indigo-600" />
+            </div>
+        );
+    }
+
+    if (!isLoggedIn) {
+        return (
+            <div className="min-h-screen bg-slate-50 p-4 flex flex-col items-center justify-center">
+                <div className="bg-white p-8 rounded-2xl shadow-lg max-w-sm w-full text-center space-y-4">
+                    <h2 className="text-xl font-bold text-gray-800">Login Required</h2>
+                    <p className="text-gray-600">Please login with LINE to continue.</p>
+                    <button
+                        onClick={() => liff.login()}
+                        className="w-full bg-[#06C755] hover:bg-[#05b34c] text-white font-bold py-3 rounded-xl transition-colors flex items-center justify-center gap-2"
+                    >
+                        <span>LINE Login</span>
+                    </button>
+                    {statusMessage && <p className="text-sm text-red-500">{statusMessage}</p>}
+                </div>
             </div>
         );
     }
