@@ -223,6 +223,26 @@ export default function AdminPage() {
                         <h1 className="text-xl font-bold text-slate-800">Team Manager</h1>
                         <p className="text-sm text-slate-500">{players.length} Players</p>
                     </div>
+                    <button
+                        onClick={async () => {
+                            if (!confirm('全プレイヤーに体重入力リマインダーを送信しますか？')) return;
+                            try {
+                                const res = await fetch('/api/admin/notify', { method: 'POST' });
+                                const data = await res.json();
+                                if (data.success) {
+                                    alert('送信しました！');
+                                } else {
+                                    alert('送信に失敗しました: ' + (data.message || 'Unknown error'));
+                                }
+                            } catch (e) {
+                                console.error(e);
+                                alert('エラーが発生しました');
+                            }
+                        }}
+                        className="text-xs bg-indigo-50 text-indigo-600 px-3 py-2 rounded-lg hover:bg-indigo-100 transition-colors font-medium"
+                    >
+                        Send Reminder
+                    </button>
                 </div>
 
                 <div className="flex-1 overflow-y-auto p-4 space-y-3 pb-24 md:pb-4">

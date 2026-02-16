@@ -1,7 +1,7 @@
-
 import { NextRequest, NextResponse } from 'next/server';
-import { lineClient } from '@/lib/line';
 import { adminDb } from '@/lib/firebaseAdmin';
+import { sendWeightReminder } from '@/lib/notification';
+import { lineClient } from '@/lib/line';
 
 export const dynamic = 'force-dynamic';
 
@@ -30,12 +30,17 @@ export async function GET(request: NextRequest) {
 
         // Production logic
         const snapshot = await adminDb.collection('users').where('role', '==', 'player').get();
-        // TODO: In production, implementing multicast to all users' line_user_id
-        // const userIds = snapshot.docs.map(doc => doc.data().line_user_id).filter(id => id);
+        const userIds = snapshot.docs
+            .map(doc => doc.data().line_user_id)
+            .filter((id): id is string => !!id);
 
-        console.log(`[CRON] Found ${snapshot.size} players. (Multicast logic needs implementation when IDs are real)`);
+        console.log(`[CRON] Found ${userIds.length} players with LINE ID.`);
 
-        return NextResponse.json({ success: true, message: `Cron executed. Found ${snapshot.size} players.` });
+        if (userIds.length > 0) {
+            await sendWeightReminder(userIds);
+        }
+
+        return NextResponse.json({ success: true, message: `Cron executed. Sent to ${userIds.length} players.` });
 
     } catch (error) {
         console.error('[CRON] Error:', error);
