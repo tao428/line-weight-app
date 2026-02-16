@@ -11,7 +11,7 @@ import { Loader2, User, UserCog } from 'lucide-react';
 export default function Home() {
   const { liff, isLoggedIn, profile } = useLiff();
   const router = useRouter();
-  const [status, setStatus] = useState<'loading' | 'register' | 'error'>('loading');
+  const [status, setStatus] = useState<'loading' | 'register' | 'error' | 'login'>('loading');
   const [statusMessage, setStatusMessage] = useState('Initializing...');
 
   // Registration Form State
@@ -30,10 +30,7 @@ export default function Home() {
     if (!liff) return;
 
     if (!isLoggedIn) {
-      // Depending on setting, LIFF might auto login. 
-      // If not, we should ask user to login or we are outside LINE.
-      setStatusMessage('Please login to LINE.');
-      // liff.login(); // Auto login can be triggered here if desired
+      setStatus('login');
       return;
     }
 
@@ -123,6 +120,31 @@ export default function Home() {
         </div>
       </div>
     )
+  }
+
+  if (status === 'login') {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center p-6 bg-slate-50">
+        <div className="bg-white p-8 rounded-2xl shadow-lg max-w-sm w-full text-center space-y-6">
+          <div className="bg-indigo-600 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto shadow-indigo-200 shadow-lg">
+            <User className="w-8 h-8 text-white" />
+          </div>
+          <div>
+            <h1 className="text-2xl font-bold text-gray-800">Welcome Back</h1>
+            <p className="text-gray-500 mt-2">Please login to manage your team.</p>
+          </div>
+          <button
+            onClick={() => liff?.login()}
+            className="w-full bg-[#06C755] hover:bg-[#05b34c] text-white font-bold py-4 rounded-xl transition-all shadow-lg shadow-green-100 active:scale-[0.98] flex items-center justify-center gap-3"
+          >
+            <div className="w-6 h-6 bg-white rounded-full flex items-center justify-center">
+              <span className="text-[#06C755] font-bold text-xs">L</span>
+            </div>
+            <span className="text-xl font-bold">LINE Login</span>
+          </button>
+        </div>
+      </div>
+    );
   }
 
   // Registration Form
