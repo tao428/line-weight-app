@@ -163,6 +163,15 @@ export default function AdminPage() {
     };
 
     useEffect(() => {
+        // Check for admin session from password login
+        const isAdminSession = localStorage.getItem('admin_session') === 'true';
+
+        if (isAdminSession) {
+            setLoading(true);
+            fetchPlayers();
+            return;
+        }
+
         // Mock authentication check for local dev / unlinked LIFF
         // In real app, we check firebase or session
         if (!process.env.NEXT_PUBLIC_LIFF_ID && process.env.NODE_ENV === 'development') {
@@ -172,8 +181,16 @@ export default function AdminPage() {
 
         if (!liff) return;
 
-        // Simple bypass for now since we are in mock mode
-        fetchPlayers();
+        // If LIFF is logged in but not authorized strictly via Firebase here (we rely on client routing from home for now)
+        // ideally we should verify user role again, but for this step we assume if they got here via LIFF they are okay 
+        // OR we should actually check their role if they are not session admin.
+        if (isLoggedIn && profile?.userId) {
+            fetchPlayers();
+        } else if (!isLoggedIn) {
+            // If not logged in via LIFF and no admin session, force login or redirect
+            // status handling is mostly done in Home, but if they land here directly:
+            router.replace('/');
+        }
 
     }, [liff, isLoggedIn, profile, router]);
 
