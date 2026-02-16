@@ -4,6 +4,11 @@ import crypto from 'crypto';
 // LINE Channel Secret from env
 const channelSecret = process.env.LINE_CHANNEL_SECRET || '';
 
+// ブラウザ確認用
+export async function GET(req: NextRequest) {
+    return NextResponse.json({ status: 'ok', message: 'Webhook is working!' });
+}
+
 export async function POST(req: NextRequest) {
     try {
         const body = await req.text();
