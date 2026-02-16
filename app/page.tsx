@@ -127,18 +127,6 @@ export default function Home() {
     )
   }
 
-  const [adminPassword, setAdminPassword] = useState('');
-
-  const handleAdminLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (adminPassword === process.env.NEXT_PUBLIC_ADMIN_PASSWORD) {
-      localStorage.setItem('admin_session', 'true');
-      router.replace('/admin');
-    } else {
-      alert('Incorrect password');
-    }
-  };
-
   if (status === 'login') {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center p-6 bg-slate-50">
@@ -148,9 +136,8 @@ export default function Home() {
           </div>
           <div>
             <h1 className="text-2xl font-bold text-gray-800">Welcome Back</h1>
-            <p className="text-gray-500 mt-2">Please login to manage your team.</p>
+            <p className="text-gray-500 mt-2">Please login with LINE to manage your weight.</p>
           </div>
-
           <button
             onClick={() => liff?.login()}
             className="w-full bg-[#06C755] hover:bg-[#05b34c] text-white font-bold py-4 rounded-xl transition-all shadow-lg shadow-green-100 active:scale-[0.98] flex items-center justify-center gap-3"
@@ -160,25 +147,6 @@ export default function Home() {
             </div>
             <span className="text-xl font-bold">LINE Login</span>
           </button>
-
-          <div className="relative border-t border-gray-100 pt-6 mt-6">
-            <p className="text-xs text-gray-400 uppercase font-bold mb-4">或者 (Or)</p>
-            <form onSubmit={handleAdminLogin} className="space-y-3">
-              <input
-                type="password"
-                placeholder="Admin Password"
-                value={adminPassword}
-                onChange={(e) => setAdminPassword(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 outline-none text-sm"
-              />
-              <button
-                type="submit"
-                className="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-3 rounded-xl transition-colors text-sm"
-              >
-                Admin Login
-              </button>
-            </form>
-          </div>
         </div>
       </div>
     );

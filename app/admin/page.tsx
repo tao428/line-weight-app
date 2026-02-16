@@ -187,9 +187,8 @@ export default function AdminPage() {
         if (isLoggedIn && profile?.userId) {
             fetchPlayers();
         } else if (!isLoggedIn) {
-            // If not logged in via LIFF and no admin session, force login or redirect
-            // status handling is mostly done in Home, but if they land here directly:
-            router.replace('/');
+            // If not logged in via LIFF and no admin session, redirect to admin login
+            router.replace('/admin/login');
         }
 
     }, [liff, isLoggedIn, profile, router]);
